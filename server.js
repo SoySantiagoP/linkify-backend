@@ -2,16 +2,27 @@ import express from "express";
 import cors from "cors";
 
 const app = express();
+const PORT = process.env.PORT || 3000;
+
 app.use(cors());
 app.use(express.json());
 
-app.post("/api/ask", async (req, res) => {
-  const { prompt } = req.body;
-
-  // Respuesta simulada (IA falsa por ahora)
-  const fakeResponse = `Perfecto, voy a crear un flujo que conecte Typeform, Notion y Calendly automáticamente.`;
-
-  res.json({ reply: fakeResponse });
+// ✅ Ruta de prueba básica
+app.get("/", (req, res) => {
+  res.send("🚀 Linkify backend activo y funcionando correctamente");
 });
 
-app.listen(10000, () => console.log("✅ Linkify backend running"));
+// ✅ Ruta de salud para monitoreo
+app.get("/health", (req, res) => {
+  res.json({ status: "ok", uptime: process.uptime(), timestamp: Date.now() });
+});
+
+// ✅ Ruta donde luego recibiremos datos desde n8n
+app.post("/webhook", (req, res) => {
+  console.log("📩 Datos recibidos:", req.body);
+  res.json({ message: "Datos recibidos correctamente", data: req.body });
+});
+
+app.listen(PORT, () => {
+  console.log(`✅ Linkify backend corriendo en puerto ${PORT}`);
+});
